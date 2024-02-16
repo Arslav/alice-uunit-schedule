@@ -1,0 +1,19 @@
+entity TimeEntity:
+    lemma: true
+    values:
+        date:
+            $YANDEX.DATETIME
+        monday:
+            (следующий)? понедельник
+        tuesday:
+            (следующий)? вторник
+        wednesday:
+            (следующую)? среда
+        thursday:
+            (следующий)? четверг
+        friday:
+            (следующая)? пятница
+        saturday:
+            (следующая)? суббота
+        sunday:
+            (следующее)? воскресенье

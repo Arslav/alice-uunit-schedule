@@ -1,0 +1,57 @@
+{
+  "meta": {
+    "locale": "ru-RU",
+    "timezone": "UTC",
+    "client_id": "ru.yandex.searchplugin/7.16 (none none; android 4.4.2)",
+    "interfaces": {
+      "screen": {},
+      "payments": {},
+      "account_linking": {}
+    }
+  },
+  "session": {
+    "message_id": 2,
+    "session_id": "2121e7e7-29e0-434b-b7df-10f85e8afc55",
+    "skill_id": "60bce778-1df3-432f-bfd2-3553bd8b77bd",
+    "user": {
+      "user_id": "5BC26158DCAA0C8E9C42325F9654AF8C6CBC9640B7031272969407EBCA70BADC"
+    },
+    "application": {
+      "application_id": "AB1D6D46FBAC8CF0299968D429396175DBA8511C3AAA05D033EE55D4D91318CE"
+    },
+    "new": false,
+    "user_id": "AB1D6D46FBAC8CF0299968D429396175DBA8511C3AAA05D033EE55D4D91318CE"
+  },
+  "request": {
+    "command": "расписание занятий на вторник",
+    "original_utterance": "Расписание занятий на вторник",
+    "nlu": {
+      "tokens": [
+        "расписание",
+        "занятий",
+        "на",
+        "вторник"
+      ],
+      "entities": [],
+      "intents": {
+        "schedule": {
+          "slots": {
+            "time": {
+              "type": "TimeEntity",
+              "tokens": {
+                "start": 3,
+                "end": 4
+              },
+              "value": "tuesday"
+            }
+          }
+        }
+      }
+    },
+    "markup": {
+      "dangerous_context": false
+    },
+    "type": "SimpleUtterance"
+  },
+  "version": "1.0"
+}
