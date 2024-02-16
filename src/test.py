@@ -98,7 +98,7 @@ def test_non_exist_day():
 
 
 def test_empty():
-    expected = 'Привет! Давай я посмотрю рассписание УУНИТа для тебя? Задай свой вопрос'
+    expected = 'Привет! Давай я посмотрю расписание УУНИТа для тебя? Задай свой вопрос'
 
     request = get_request_from_sample('empty.json')
     response = main.handler(request, None)

@@ -8,3 +8,6 @@ deploy:
 		--execution-timeout=3s\
 		--source-path=./dist.zip
 	rm -r dist.zip
+
+tests:
+	cd src && pytest test.py

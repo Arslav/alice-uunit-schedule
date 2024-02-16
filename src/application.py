@@ -3,11 +3,11 @@ from intents import *
 
 
 class Application:
-    intents: dict = {
+    _intents: dict = {
         'schedule': 'ScheduleIntent'
     }
 
-    _helloMessage = 'Привет! Давай я посмотрю рассписание УУНИТа для тебя? Задай свой вопрос'
+    _helloMessage = 'Привет! Давай я посмотрю расписание УУНИТа для тебя? Задай свой вопрос'
     _defaultMessage = 'Извини, не расслышал, повтори еще раз'
 
     def hello(self):
@@ -15,9 +15,9 @@ class Application:
 
     def intent(self, nlu: dict):
         for intent_key in nlu['intents']:
-            if intent_key not in self.intents:
+            if intent_key not in self._intents:
                 continue
-            class_obj = getattr(import_module('intents'), self.intents[intent_key])
+            class_obj = getattr(import_module('intents'), self._intents[intent_key])
             intent: AbstractIntent = class_obj(
                 tokens=nlu['tokens'],
                 entities=nlu['entities'],

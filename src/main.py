@@ -1,5 +1,3 @@
-import json
-
 from application import Application
 
 app = Application()
