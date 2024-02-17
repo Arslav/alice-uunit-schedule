@@ -104,4 +104,5 @@ class ScheduleIntent(AbstractIntent):
         for entity in self._entities:
             if _is_yandex_datetime_type(entity):
                 return entity
+        
         return None

@@ -1,4 +1,5 @@
-from datetime import datetime
+import commands._pronouncing as pronouncing
+from utils import DateTime
 
 
 class RenderInterface:
@@ -7,31 +8,6 @@ class RenderInterface:
 
 
 class DefaultRender(RenderInterface):
-    _pairs: list = [
-        'Первая пара',
-        'Вторая пара',
-        'Третья пара',
-        'Четвертая пара',
-        'Пятая пара',
-        'Шестая пара',
-        'Седьмая пара',
-    ]
-    _dayList = [
-        'первое', 'второе', 'третье', 'четвёртое', 'пятое',
-        'шестое', 'седьмое', 'восьмое', 'девятое', 'десятое',
-        'одиннадцатое', 'двенадцатое', 'тринадцатое', 'четырнадцатое',
-        'пятнадцатое', 'шестнадцатое', 'семнадцатое', 'восемнадцатое',
-        'девятнадцатое', 'двадцатое', 'двадцать первое', 'двадцать второе',
-        'двадцать третье', 'двадацать четвёртое', 'двадцать пятое',
-        'двадцать шестое', 'двадцать седьмое', 'двадцать восьмое',
-        'двадцать девятое', 'тридцатое', 'тридцать первое'
-    ]
-    _monthList = [
-        'января', 'февраля', 'марта',
-        'апреля', 'мая', 'июня',
-        'июля', 'августа', 'сентября',
-        'октября', 'ноября', 'декабря'
-    ]
     _nextTitle = [
         'Расписание занятий на понедельник, {}:',
         'Расписание занятий на вторник, {}:',
@@ -43,53 +19,64 @@ class DefaultRender(RenderInterface):
     ]
     _todayTitle = 'Расписание занятий на сегодня'
     _tomorrowTitle = 'Расписание занятий на завтра'
-    _default = 'Поздравляю! Сегодня вы отдыхаете!'
+    _default = [
+        'Поздравляю! Сегодня вы отдыхаете!',
+        'Поздравляю! Завтра вы отдыхаете!',
+        'Поздравляю! В этот день вы отдыхаете!',
+    ]
 
     def render(self, *args) -> str:
         data: list = args[0]
-        datetime_obj: datetime = args[1]
+        datetime_obj: DateTime = DateTime.from_datetime(args[1])
 
         if not data:
-            return self._default
+            return self._get_default_by_date(datetime_obj)
 
-        text = ''
-        text += self._get_header_by_date(datetime_obj) + '\n'
+        text = self._get_header_by_date(datetime_obj) + '\n'
 
         for item in data:
-            text += f"{self._get_pair_number(item[0])} - {item[4]} - \"{item[1]}\"\n"
+            text += self._format(item) + '\n'
 
         return text
 
-    def _get_date_text(self, datetime_obj: datetime):
-        date_text = self._dayList[datetime_obj.day - 1] + ' ' + self._monthList[datetime_obj.month - 1]
-        return date_text
+    def _get_title(self, datetime_obj: DateTime):
+        weekday = datetime_obj.weekday()
+        title = self._nextTitle[weekday]
+        date = pronouncing.date(datetime_obj)
 
-    def _get_header_by_date(self, datetime_obj: datetime):
-        now = datetime.now()
-        if datetime_obj.date() == now.date():
+        return title.format(date)
+
+    def _get_default_by_date(self, datetime_obj: DateTime):
+        if datetime_obj.is_today():
+            return self._default[0]
+        elif datetime_obj.is_tomorrow():
+            return self._default[1]
+
+        return self._default[2]
+
+    def _get_header_by_date(self, datetime_obj: DateTime):
+        if datetime_obj.is_today():
             return self._todayTitle
-        elif datetime_obj.date() == now.replace(day=now.day + 1).date():
+        elif datetime_obj.is_tomorrow():
             return self._tomorrowTitle
-        else:
-            date_text = self._get_date_text(datetime_obj)
-            title = self._nextTitle[datetime_obj.isocalendar().weekday - 1]
-            return title.format(date_text)
 
-    def _get_pair_number(self, number: int) -> str:
-        return self._pairs[number - 1]
+        return self._get_title(datetime_obj)
+
+    def _format(self, item: tuple):
+        pair_number = pronouncing.pair_number(item[0])
+        pair_type = item[4]
+        title = item[1]
+
+        return f'{pair_number} - {pair_type} - "{title}"'
 
 
 class ByClassRender(DefaultRender):
-    def render(self, *args) -> str:
-        data: list = args[0]
-        datetime_obj: datetime = args[1]
+    def _format(self, item: tuple):
+        pair_number = pronouncing.pair_number(item[0])
+        class_number = item[2]
 
-        if not data:
-            return self._default
+        return f'{pair_number} - "{class_number}"'
 
-        text = ''
-        text += self._get_header_by_date(datetime_obj) + '\n'
-        for item in data:
-            text += f"{self._get_pair_number(item[0])} - \"{item[2]}\"\n"
 
-        return text
+def factory_by_is_class(is_class: bool) -> RenderInterface:
+    return DefaultRender() if not is_class else ByClassRender()

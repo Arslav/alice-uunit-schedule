@@ -1,11 +1,13 @@
 import json
+from unittest.mock import patch
 
 from freezegun import freeze_time
 
 import main
+import uunit
 
 
-def get_request_from_sample(name: str) -> dict:
+def get_from_sample(name: str) -> dict:
     with open(f'tests/samples/{name}', 'r') as data_file:
         json_data = data_file.read()
 
@@ -23,8 +25,14 @@ def test_weekday_by_auditory():
                 'Вторая пара - "Спортивный зал"\n'
                 'Третья пара - "7-206"\n')
 
-    request = get_request_from_sample('sample1.json')
-    response = main.handler(request, None)
+    with patch.object(
+            uunit.Fetcher,
+            'get_group_schedule',
+            return_value=get_from_sample('uunit/group_schedule.json')
+    ):
+        request = get_from_sample('sample1.json')
+        response = main.handler(request, None)
+
     actual = get_response_text(response)
 
     assert actual == expected
@@ -38,8 +46,14 @@ def test_today_by_auditory():
                 'Третья пара - "7-406"\n'
                 'Четвертая пара - "7-204"\n')
 
-    request = get_request_from_sample('sample2.json')
-    response = main.handler(request, None)
+    with patch.object(
+            uunit.Fetcher,
+            'get_group_schedule',
+            return_value=get_from_sample('uunit/group_schedule.json')
+    ):
+        request = get_from_sample('sample2.json')
+        response = main.handler(request, None)
+
     actual = get_response_text(response)
 
     assert actual == expected
@@ -53,8 +67,14 @@ def test_tomorrow():
                 'Четвертая пара - Лабораторная работа - "Техническая и вычислительная физика"\n'
                 'Четвертая пара - Лабораторная работа - "Техническая и вычислительная физика"\n')
 
-    request = get_request_from_sample('sample3.json')
-    response = main.handler(request, None)
+    with patch.object(
+            uunit.Fetcher,
+            'get_group_schedule',
+            return_value=get_from_sample('uunit/group_schedule.json')
+    ):
+        request = get_from_sample('sample3.json')
+        response = main.handler(request, None)
+
     actual = get_response_text(response)
 
     assert actual == expected
@@ -67,8 +87,14 @@ def test_by_date_test():
                 'Четвертая пара - Лекция - "Основы проектной деятельности"\n'
                 'Пятая пара - Практика (семинар) - "Основы саморазвития"\n')
 
-    request = get_request_from_sample('sample4.json')
-    response = main.handler(request, None)
+    with patch.object(
+            uunit.Fetcher,
+            'get_group_schedule',
+            return_value=get_from_sample('uunit/group_schedule.json')
+    ):
+        request = get_from_sample('sample4.json')
+        response = main.handler(request, None)
+
     actual = get_response_text(response)
 
     assert actual == expected
@@ -80,8 +106,14 @@ def test_by_date_2_test():
                 'Четвертая пара - Лекция - "История России"\n'
                 'Пятая пара - Физвоспитание - "Физическая культура и спорт"\n')
 
-    request = get_request_from_sample('sample5.json')
-    response = main.handler(request, None)
+    with patch.object(
+            uunit.Fetcher,
+            'get_group_schedule',
+            return_value=get_from_sample('uunit/group_schedule.json')
+    ):
+        request = get_from_sample('sample5.json')
+        response = main.handler(request, None)
+
     actual = get_response_text(response)
 
     assert actual == expected
@@ -90,8 +122,9 @@ def test_by_date_2_test():
 def test_non_exist_day():
     expected = 'Извини, не расслышал, повтори еще раз'
 
-    request = get_request_from_sample('not_exist_day.json')
+    request = get_from_sample('not_exist_day.json')
     response = main.handler(request, None)
+
     actual = get_response_text(response)
 
     assert actual == expected
@@ -100,8 +133,9 @@ def test_non_exist_day():
 def test_empty():
     expected = 'Привет! Давай я посмотрю расписание УУНИТа для тебя? Задай свой вопрос'
 
-    request = get_request_from_sample('empty.json')
+    request = get_from_sample('empty.json')
     response = main.handler(request, None)
+
     actual = get_response_text(response)
 
     assert actual == expected
@@ -113,8 +147,38 @@ def test_tuesday():
                 'Четвертая пара - Лекция - "Техническая и вычислительная физика"\n'
                 'Седьмая пара - Лекция - "Экология и устойчивое развитие (Green Class)"\n')
 
-    request = get_request_from_sample('tuesday.json')
-    response = main.handler(request, None)
+    with patch.object(
+            uunit.Fetcher,
+            'get_group_schedule',
+            return_value=get_from_sample('uunit/group_schedule.json')
+    ):
+        request = get_from_sample('tuesday.json')
+        response = main.handler(request, None)
+
     actual = get_response_text(response)
 
     assert actual == expected
+
+
+def test_today_request_without_stub():
+    request = get_from_sample('sample2.json')
+    response = main.handler(request, None)
+
+    actual = get_response_text(response)
+
+    assert 'Расписание занятий' in actual or 'Поздравляю!' in actual
+
+
+def test_fetcher_error():
+    with patch.object(
+            uunit.Fetcher,
+            'get_group_schedule',
+            return_value=get_from_sample('uunit/group_schedule.json')
+    ) as method:
+        method.side_effect = uunit.FetcherException()
+        request = get_from_sample('sample2.json')
+        response = main.handler(request, None)
+
+    actual = get_response_text(response)
+
+    assert actual == 'Произошла ошибка, попробуй еще раз!'

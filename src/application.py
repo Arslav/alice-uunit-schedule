@@ -1,10 +1,11 @@
 from importlib import import_module
+
 from intents import *
 
 
 class Application:
     _intents: dict = {
-        'schedule': 'ScheduleIntent'
+        'schedule': ScheduleIntent.__name__
     }
 
     _helloMessage = 'Привет! Давай я посмотрю расписание УУНИТа для тебя? Задай свой вопрос'
