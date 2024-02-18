@@ -1,5 +1,6 @@
 import commands._pronouncing as pronouncing
 from utils import DateTime
+from uunit import Pair
 
 
 class RenderInterface:
@@ -26,7 +27,7 @@ class DefaultRender(RenderInterface):
     ]
 
     def render(self, *args) -> str:
-        data: list = args[0]
+        data: list[Pair] = args[0]
         datetime_obj: DateTime = DateTime.from_datetime(args[1])
 
         if not data:
@@ -62,20 +63,13 @@ class DefaultRender(RenderInterface):
 
         return self._get_title(datetime_obj)
 
-    def _format(self, item: tuple):
-        pair_number = pronouncing.pair_number(item[0])
-        pair_type = item[4]
-        title = item[1]
-
-        return f'{pair_number} - {pair_type} - "{title}"'
+    def _format(self, item: Pair):
+        return f'{pronouncing.pair_number(item.number)} - {item.type} - "{item.title}"'
 
 
 class ByClassRender(DefaultRender):
-    def _format(self, item: tuple):
-        pair_number = pronouncing.pair_number(item[0])
-        class_number = item[2]
-
-        return f'{pair_number} - "{class_number}"'
+    def _format(self, item: Pair):
+        return f'{pronouncing.pair_number(item.number)} - "{item.room}"'
 
 
 def factory_by_is_class(is_class: bool) -> RenderInterface:
