@@ -15,19 +15,19 @@ class AbstractIntent:
         pass
 
 
-def _is_yandex_datetime_type(entity):
+def _is_yandex_datetime_type(entity) -> bool:
     return entity['type'] == 'YANDEX.DATETIME'
 
 
-def _has_date_attribute(value):
+def _has_date_attribute(value) -> bool:
     return 'month' in value and 'day' in value
 
 
-def _is_relative_day(value):
+def _is_relative_day(value) -> bool:
     return 'day_is_relative' in value and value['day_is_relative']
 
 
-def _get_yandex_date(value) -> Optional[_datetime.datetime]:
+def _get_yandex_date(value: dict) -> Optional[_datetime.datetime]:
     try:
         if _is_relative_day(value):
             date = _datetime.datetime.now()
@@ -55,9 +55,10 @@ class ScheduleIntent(AbstractIntent):
         'sunday': 7,
     }
 
-    def run(self):
+    def run(self) -> str:
         self._raise_if_not_time_slot()
 
+        date: datetime
         if self._is_date_slot():
             date = self._absolute_date_intent()
         else:
@@ -73,7 +74,7 @@ class ScheduleIntent(AbstractIntent):
     def _has_class_slot(self) -> bool:
         return 'class' in self._slots
 
-    def _weekday_intent(self):
+    def _weekday_intent(self) -> _datetime.datetime:
         weekday = self._get_weekday_from_slot()
 
         now = _datetime.datetime.now()
@@ -83,20 +84,20 @@ class ScheduleIntent(AbstractIntent):
 
         return date
 
-    def _absolute_date_intent(self):
+    def _absolute_date_intent(self) -> Optional[_datetime.datetime]:
         entity = self._find_yandex_datetime()
         if not entity:
             return None
 
         return _get_yandex_date(entity['value'])
 
-    def _get_weekday_from_slot(self):
+    def _get_weekday_from_slot(self) -> int:
         return self._weekdays[self._slots['time']['value']]
 
-    def _is_date_slot(self):
+    def _is_date_slot(self) -> bool:
         return self._slots['time']['value'] == 'date'
 
-    def _raise_if_not_time_slot(self):
+    def _raise_if_not_time_slot(self) -> None:
         if 'time' not in self._slots:
             raise IntentError()
 

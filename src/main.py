@@ -3,7 +3,7 @@ from application import Application
 app = Application()
 
 
-def handler(event, context):
+def handler(event, context) -> dict:
     text = app.hello()
 
     nlu = event.get('request', {}).get('nlu', {})

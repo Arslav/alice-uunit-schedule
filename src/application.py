@@ -11,10 +11,10 @@ class Application:
     _helloMessage = 'Привет! Давай я посмотрю расписание УУНИТа для тебя? Задай свой вопрос'
     _defaultMessage = 'Извини, не расслышал, повтори еще раз'
 
-    def hello(self):
+    def hello(self) -> str:
         return self._helloMessage
 
-    def intent(self, nlu: dict):
+    def intent(self, nlu: dict) -> str:
         for intent_key in nlu['intents']:
             if intent_key not in self._intents:
                 continue

@@ -19,7 +19,7 @@ def get_response_text(data: dict) -> str:
 
 
 @freeze_time("2024-02-16")
-def test_weekday_by_auditory():
+def test_weekday_by_auditory() -> None:
     expected = ('Расписание занятий на понедельник, девятнадцатое февраля:\n'
                 'Первая пара - "7-401"\n'
                 'Вторая пара - "Спортивный зал"\n'
@@ -39,7 +39,7 @@ def test_weekday_by_auditory():
 
 
 @freeze_time("2024-02-16")
-def test_today_by_auditory():
+def test_today_by_auditory() -> None:
     expected = ('Расписание занятий на сегодня\n'
                 'Первая пара - "9-403"\n'
                 'Вторая пара - "9-403"\n'
@@ -60,7 +60,7 @@ def test_today_by_auditory():
 
 
 @freeze_time("2024-02-16")
-def test_tomorrow():
+def test_tomorrow() -> None:
     expected = ('Расписание занятий на завтра\n'
                 'Третья пара - Лабораторная работа - "Техническая и вычислительная физика"\n'
                 'Третья пара - Лабораторная работа - "Техническая и вычислительная физика"\n'
@@ -80,7 +80,7 @@ def test_tomorrow():
     assert actual == expected
 
 
-def test_by_date_test():
+def test_by_date_test() -> None:
     expected = ('Расписание занятий на пятницу, двенадцатое апреля:\n'
                 'Первая пара - Практика (семинар) - "Высшая математика"\n'
                 'Вторая пара - Практика (семинар) - "Высшая математика"\n'
@@ -100,7 +100,7 @@ def test_by_date_test():
     assert actual == expected
 
 
-def test_by_date_2_test():
+def test_by_date_2_test() -> None:
     expected = ('Расписание занятий на четверг, двадцать второе февраля:\n'
                 'Третья пара - Практика (семинар) - "Иностранный язык"\n'
                 'Четвертая пара - Лекция - "История России"\n'
@@ -119,7 +119,7 @@ def test_by_date_2_test():
     assert actual == expected
 
 
-def test_non_exist_day():
+def test_non_exist_day() -> None:
     expected = 'Извини, не расслышал, повтори еще раз'
 
     request = get_from_sample('not_exist_day.json')
@@ -130,7 +130,7 @@ def test_non_exist_day():
     assert actual == expected
 
 
-def test_empty():
+def test_empty() -> None:
     expected = 'Привет! Давай я посмотрю расписание УУНИТа для тебя? Задай свой вопрос'
 
     request = get_from_sample('empty.json')
@@ -141,7 +141,7 @@ def test_empty():
     assert actual == expected
 
 
-def test_tuesday():
+def test_tuesday() -> None:
     expected = ('Расписание занятий на вторник, двадцатое февраля:\n'
                 'Третья пара - Лекция - "Карьера: проектирование и управление"\n'
                 'Четвертая пара - Лекция - "Техническая и вычислительная физика"\n'
@@ -160,7 +160,7 @@ def test_tuesday():
     assert actual == expected
 
 
-def test_today_request_without_stub():
+def test_today_request_without_stub() -> None:
     request = get_from_sample('sample2.json')
     response = main.handler(request, None)
 
@@ -169,7 +169,7 @@ def test_today_request_without_stub():
     assert 'Расписание занятий' in actual or 'Поздравляю!' in actual
 
 
-def test_fetcher_error():
+def test_fetcher_error() -> None:
     with patch.object(
             uunit.Fetcher,
             'get_group_schedule',

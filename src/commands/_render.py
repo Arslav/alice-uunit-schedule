@@ -40,14 +40,14 @@ class DefaultRender(RenderInterface):
 
         return text
 
-    def _get_title(self, datetime_obj: DateTime):
+    def _get_title(self, datetime_obj: DateTime) -> str:
         weekday = datetime_obj.weekday()
         title = self._nextTitle[weekday]
         date = pronouncing.date(datetime_obj)
 
         return title.format(date)
 
-    def _get_default_by_date(self, datetime_obj: DateTime):
+    def _get_default_by_date(self, datetime_obj: DateTime) -> str:
         if datetime_obj.is_today():
             return self._default[0]
         elif datetime_obj.is_tomorrow():
@@ -55,7 +55,7 @@ class DefaultRender(RenderInterface):
 
         return self._default[2]
 
-    def _get_header_by_date(self, datetime_obj: DateTime):
+    def _get_header_by_date(self, datetime_obj: DateTime) -> str:
         if datetime_obj.is_today():
             return self._todayTitle
         elif datetime_obj.is_tomorrow():
@@ -63,12 +63,12 @@ class DefaultRender(RenderInterface):
 
         return self._get_title(datetime_obj)
 
-    def _format(self, item: Pair):
+    def _format(self, item: Pair) -> str:
         return f'{pronouncing.pair_number(item.number)} - {item.type} - "{item.title}"'
 
 
 class ByClassRender(DefaultRender):
-    def _format(self, item: Pair):
+    def _format(self, item: Pair) -> str:
         return f'{pronouncing.pair_number(item.number)} - "{item.room}"'
 
 

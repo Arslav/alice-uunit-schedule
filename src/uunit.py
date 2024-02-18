@@ -35,23 +35,23 @@ class Fetcher:
     }
 
     @cache
-    def get_groups(self):
+    def get_groups(self) -> dict:
         return self._request('GET', self.host + f'groups?site={self.site}')
 
     @cache
-    def get_departments(self):
+    def get_departments(self) -> dict:
         return self._request('GET', self.host + f'departments?site={self.site}')
 
     @cache
-    def get_teachers(self):
+    def get_teachers(self) -> dict:
         return self._request('GET', self.host + f'teachers?site={self.site}')
 
     @cache
-    def get_organizations(self):
+    def get_organizations(self) -> dict:
         return self._request('GET', self.host + f'organizations?site={self.site}')
 
     @cache
-    def get_group_schedule(self, group_id=4381, semester_id=232):
+    def get_group_schedule(self, group_id=4381, semester_id=232) -> dict:
         return self._request('GET', self.host + f'schedule/0/{group_id}/semester/{semester_id}?site={self.site}')
 
     def _request(self, method: str, url: str, *, params=None, data=None) -> dict:
@@ -77,12 +77,12 @@ class Pair:
     def number(self) -> int:
         return _pairTimes[self.time]
 
-    def __lt__(self, other):
+    def __lt__(self, other) -> bool:
         return self.number < other.number
 
 
 class Parser:
-    def __init__(self, data, week, weekday):
+    def __init__(self, data, week, weekday) -> None:
         self.data = data
         self.week = week + 18
         self.weekday = weekday
