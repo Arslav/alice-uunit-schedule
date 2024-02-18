@@ -1,4 +1,4 @@
-name: Tests
+name: Tests and Deploy
 
 on:
   push:
@@ -10,7 +10,7 @@ permissions:
   contents: read
 
 jobs:
-  build:
+  tests:
     runs-on: ubuntu-latest
     steps:
     - uses: actions/checkout@v3
@@ -27,3 +27,22 @@ jobs:
       run: |
         cd src
         pytest test.py
+
+  deploy:
+    runs-on: ubuntu-latest
+    needs: ['tests']
+    if: github.ref == 'refs/heads/main'
+    steps:
+     - uses: actions/checkout@v3
+     - name: Deploy Function
+       uses: yc-actions/yc-sls-function@v2
+       with:
+         yc-sa-json-credentials: ${{ secrets.YC_SA_JSON_CREDENTIALS }}
+         folder-id: 'b1gvdf9o5vknfjmt10ij'
+         function-name: 'uunit-schedule'
+         runtime: 'python39'
+         memory: '128Mb'
+         source-root: './src'
+         entrypoint: 'main.handler'
+         tags: |
+           latest
