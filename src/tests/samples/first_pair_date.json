@@ -1,0 +1,81 @@
+{
+  "meta": {
+    "locale": "ru-RU",
+    "timezone": "UTC",
+    "client_id": "ru.yandex.searchplugin/7.16 (none none; android 4.4.2)",
+    "interfaces": {
+      "screen": {},
+      "payments": {},
+      "account_linking": {}
+    }
+  },
+  "session": {
+    "message_id": 5,
+    "session_id": "04888725-5590-4c3f-875b-9c6c1b0c3b63",
+    "skill_id": "60bce778-1df3-432f-bfd2-3553bd8b77bd",
+    "user": {
+      "user_id": "5BC26158DCAA0C8E9C42325F9654AF8C6CBC9640B7031272969407EBCA70BADC"
+    },
+    "application": {
+      "application_id": "AB1D6D46FBAC8CF0299968D429396175DBA8511C3AAA05D033EE55D4D91318CE"
+    },
+    "new": false,
+    "user_id": "AB1D6D46FBAC8CF0299968D429396175DBA8511C3AAA05D033EE55D4D91318CE"
+  },
+  "request": {
+    "command": "к скольки в универ 27 февраля",
+    "original_utterance": "К скольки в универ 27 февраля",
+    "nlu": {
+      "tokens": [
+        "к",
+        "скольки",
+        "в",
+        "универ",
+        "27",
+        "февраля"
+      ],
+      "entities": [
+        {
+          "type": "YANDEX.NUMBER",
+          "tokens": {
+            "start": 4,
+            "end": 5
+          },
+          "value": 27
+        },
+        {
+          "type": "YANDEX.DATETIME",
+          "tokens": {
+            "start": 4,
+            "end": 6
+          },
+          "value": {
+            "month": 2,
+            "day": 27,
+            "month_is_relative": false,
+            "day_is_relative": false
+          }
+        }
+      ],
+      "intents": {
+        "first_pair": {
+          "slots": {
+            "time": {
+              "type": "TimeEntity",
+              "tokens": {
+                "start": 4,
+                "end": 6
+              },
+              "value": "date"
+            }
+          }
+        }
+      }
+    },
+    "markup": {
+      "dangerous_context": false
+    },
+    "type": "SimpleUtterance"
+  },
+  "version": "1.0"
+}

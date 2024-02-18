@@ -9,7 +9,20 @@ class CommandInterface:
         pass
 
 
-class ByDateCommand(CommandInterface):
+class AbstractScheduleCommand(CommandInterface):
+    datetime_obj: datetime
+    render: render.RenderInterface
+
+    def _fetch_schedule(self):
+        calendar = self.datetime_obj.isocalendar()
+        data = Fetcher().get_group_schedule()
+        parser = Parser(data, calendar.week, calendar.weekday)
+        schedule = parser.parse()
+
+        return schedule
+
+
+class ByDateCommand(AbstractScheduleCommand):
     datetime_obj: datetime
     render: render.RenderInterface
 
@@ -18,13 +31,23 @@ class ByDateCommand(CommandInterface):
         self.datetime_obj = datetime_obj
 
     def execute(self) -> str:
-        calendar = self.datetime_obj.isocalendar()
-
         try:
-            data = Fetcher().get_group_schedule()
-            parser = Parser(data, calendar.week, calendar.weekday)
-            schedule = parser.parse()
-
-            return self.render.render(schedule, self.datetime_obj)
+            schedule = self._fetch_schedule()
         except FetcherException:
             return 'Произошла ошибка, попробуй еще раз!'
+
+        return self.render.render(schedule, self.datetime_obj)
+
+
+class FirstPairCommand(AbstractScheduleCommand):
+    def __init__(self, datetime_obj: datetime) -> None:
+        self.datetime_obj = datetime_obj
+        self.render = render.FirstPairRender()
+
+    def execute(self) -> str:
+        try:
+            schedule = self._fetch_schedule()
+        except FetcherException:
+            return 'Произошла ошибка, попробуй еще раз!'
+
+        return self.render.render(schedule, self.datetime_obj)

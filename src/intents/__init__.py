@@ -4,6 +4,16 @@ from typing import Optional
 from commands import *
 from intents.exceptions import *
 
+_weekdays = {
+    'monday': 1,
+    'tuesday': 2,
+    'wednesday': 3,
+    'thursday': 4,
+    'friday': 5,
+    'saturday': 6,
+    'sunday': 7,
+}
+
 
 class AbstractIntent:
     def __init__(self, tokens: dict, entities: dict, slots: dict) -> None:
@@ -44,16 +54,49 @@ def _get_yandex_date(value: dict) -> Optional[_datetime.datetime]:
     return None
 
 
-class ScheduleIntent(AbstractIntent):
-    _weekdays = {
-        'monday': 1,
-        'tuesday': 2,
-        'wednesday': 3,
-        'thursday': 4,
-        'friday': 5,
-        'saturday': 6,
-        'sunday': 7,
-    }
+class AbstractTimeEntityIntent(AbstractIntent):
+    def _has_class_slot(self) -> bool:
+        return 'class' in self._slots
+
+    def _weekday_intent(self) -> _datetime.datetime:
+        weekday = self._get_weekday_from_slot()
+
+        now = _datetime.datetime.now()
+
+        date = now - _datetime.timedelta(days=now.isoweekday())
+        date += _datetime.timedelta(days=weekday + (7 if weekday < now.isoweekday() else 0))
+
+        return date
+
+    def _absolute_date_intent(self) -> Optional[_datetime.datetime]:
+        entity = self._find_yandex_datetime()
+        if not entity:
+            return None
+
+        return _get_yandex_date(entity['value'])
+
+    def _get_weekday_from_slot(self) -> int:
+        return _weekdays[self._slots['time']['value']]
+
+    def _is_date_slot(self) -> bool:
+        return self._slots['time']['value'] == 'date'
+
+    def _raise_if_not_time_slot(self) -> None:
+        if 'time' not in self._slots:
+            raise IntentError()
+
+    def _find_yandex_datetime(self) -> Optional[dict]:
+        for entity in self._entities:
+            if _is_yandex_datetime_type(entity):
+                return entity
+
+        return None
+
+    def _has_date_time_slot(self) -> bool:
+        return 'time' in self._slots
+
+
+class ScheduleIntent(AbstractTimeEntityIntent):
 
     def run(self) -> str:
         self._raise_if_not_time_slot()
@@ -71,39 +114,21 @@ class ScheduleIntent(AbstractIntent):
 
         return command.execute()
 
-    def _has_class_slot(self) -> bool:
-        return 'class' in self._slots
 
-    def _weekday_intent(self) -> _datetime.datetime:
-        weekday = self._get_weekday_from_slot()
+class FirstPairIntent(AbstractTimeEntityIntent):
+    def run(self) -> str:
+        date: datetime
+        if self._has_date_time_slot():
+            if self._is_date_slot():
+                date = self._absolute_date_intent()
+            else:
+                date = self._weekday_intent()
+        else:
+            date = _datetime.datetime.now()
 
-        now = _datetime.datetime.now()
+        if not date:
+            raise NotRecognizedDateError()
 
-        date = now - _datetime.timedelta(days=now.isoweekday())
-        date += _datetime.timedelta(days=weekday + 7 if weekday < now.isoweekday() else 0)
+        command = FirstPairCommand(date)
 
-        return date
-
-    def _absolute_date_intent(self) -> Optional[_datetime.datetime]:
-        entity = self._find_yandex_datetime()
-        if not entity:
-            return None
-
-        return _get_yandex_date(entity['value'])
-
-    def _get_weekday_from_slot(self) -> int:
-        return self._weekdays[self._slots['time']['value']]
-
-    def _is_date_slot(self) -> bool:
-        return self._slots['time']['value'] == 'date'
-
-    def _raise_if_not_time_slot(self) -> None:
-        if 'time' not in self._slots:
-            raise IntentError()
-
-    def _find_yandex_datetime(self) -> Optional[dict]:
-        for entity in self._entities:
-            if _is_yandex_datetime_type(entity):
-                return entity
-        
-        return None
+        return command.execute()
