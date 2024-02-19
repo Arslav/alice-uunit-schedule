@@ -6,8 +6,9 @@ app = Application()
 def handler(event, context) -> dict:
     text = app.hello()
 
-    nlu = event.get('request', {}).get('nlu', {})
-    if nlu.get('intents', {}):
+    request = event.get('request', {})
+    nlu = request.get('nlu', {})
+    if request.get('command', None):
         text = app.intent(nlu)
 
     return {

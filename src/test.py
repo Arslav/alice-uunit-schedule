@@ -130,6 +130,17 @@ def test_non_exist_day() -> None:
     assert actual == expected
 
 
+def test_no_intent() -> None:
+    expected = 'Извини, не расслышал, повтори еще раз'
+
+    request = get_from_sample('requests/no_intent.json')
+    response = main.handler(request, None)
+
+    actual = get_response_text(response)
+
+    assert actual == expected
+
+
 def test_empty() -> None:
     expected = 'Привет! Давай я посмотрю расписание УУНИТа для тебя? Задай свой вопрос'
 
