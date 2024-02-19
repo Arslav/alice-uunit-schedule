@@ -58,7 +58,7 @@
         }
       ],
       "intents": {
-        "first_pair": {
+        "first_lesson": {
           "slots": {
             "time": {
               "type": "TimeEntity",

@@ -19,7 +19,7 @@ def get_response_text(data: dict) -> str:
 
 
 @freeze_time("2024-02-16")
-def test_weekday_by_auditory() -> None:
+def test_weekday_by_room() -> None:
     expected = ('Расписание занятий на понедельник, девятнадцатое февраля:\n'
                 'Первая пара - "7-401"\n'
                 'Вторая пара - "Спортивный зал"\n'
@@ -30,7 +30,7 @@ def test_weekday_by_auditory() -> None:
             'get_group_schedule',
             return_value=get_from_sample('uunit/group_schedule.json')
     ):
-        request = get_from_sample('sample1.json')
+        request = get_from_sample('requests/schedule/monday_room.json')
         response = main.handler(request, None)
 
     actual = get_response_text(response)
@@ -39,7 +39,7 @@ def test_weekday_by_auditory() -> None:
 
 
 @freeze_time("2024-02-16")
-def test_today_by_auditory() -> None:
+def test_today_by_room() -> None:
     expected = ('Расписание занятий на сегодня\n'
                 'Первая пара - "9-403"\n'
                 'Вторая пара - "9-403"\n'
@@ -51,7 +51,7 @@ def test_today_by_auditory() -> None:
             'get_group_schedule',
             return_value=get_from_sample('uunit/group_schedule.json')
     ):
-        request = get_from_sample('sample2.json')
+        request = get_from_sample('requests/schedule/today_room.json')
         response = main.handler(request, None)
 
     actual = get_response_text(response)
@@ -72,7 +72,7 @@ def test_tomorrow() -> None:
             'get_group_schedule',
             return_value=get_from_sample('uunit/group_schedule.json')
     ):
-        request = get_from_sample('sample3.json')
+        request = get_from_sample('requests/schedule/tomorrow.json')
         response = main.handler(request, None)
 
     actual = get_response_text(response)
@@ -80,7 +80,7 @@ def test_tomorrow() -> None:
     assert actual == expected
 
 
-def test_by_date_test() -> None:
+def test_by_date() -> None:
     expected = ('Расписание занятий на пятницу, двенадцатое апреля:\n'
                 'Первая пара - Практика (семинар) - "Высшая математика"\n'
                 'Вторая пара - Практика (семинар) - "Высшая математика"\n'
@@ -92,7 +92,7 @@ def test_by_date_test() -> None:
             'get_group_schedule',
             return_value=get_from_sample('uunit/group_schedule.json')
     ):
-        request = get_from_sample('sample4.json')
+        request = get_from_sample('requests/schedule/date.json')
         response = main.handler(request, None)
 
     actual = get_response_text(response)
@@ -100,7 +100,7 @@ def test_by_date_test() -> None:
     assert actual == expected
 
 
-def test_by_date_2_test() -> None:
+def test_by_date_2() -> None:
     expected = ('Расписание занятий на четверг, двадцать второе февраля:\n'
                 'Третья пара - Практика (семинар) - "Иностранный язык"\n'
                 'Четвертая пара - Лекция - "История России"\n'
@@ -111,7 +111,7 @@ def test_by_date_2_test() -> None:
             'get_group_schedule',
             return_value=get_from_sample('uunit/group_schedule.json')
     ):
-        request = get_from_sample('sample5.json')
+        request = get_from_sample('requests/schedule/date2.json')
         response = main.handler(request, None)
 
     actual = get_response_text(response)
@@ -122,7 +122,7 @@ def test_by_date_2_test() -> None:
 def test_non_exist_day() -> None:
     expected = 'Извини, не расслышал, повтори еще раз'
 
-    request = get_from_sample('not_exist_day.json')
+    request = get_from_sample('requests/schedule/not_exist_day.json')
     response = main.handler(request, None)
 
     actual = get_response_text(response)
@@ -133,7 +133,7 @@ def test_non_exist_day() -> None:
 def test_empty() -> None:
     expected = 'Привет! Давай я посмотрю расписание УУНИТа для тебя? Задай свой вопрос'
 
-    request = get_from_sample('empty.json')
+    request = get_from_sample('requests/empty.json')
     response = main.handler(request, None)
 
     actual = get_response_text(response)
@@ -153,7 +153,7 @@ def test_tuesday() -> None:
             'get_group_schedule',
             return_value=get_from_sample('uunit/group_schedule.json')
     ):
-        request = get_from_sample('tuesday.json')
+        request = get_from_sample('requests/schedule/tuesday.json')
         response = main.handler(request, None)
 
     actual = get_response_text(response)
@@ -162,7 +162,7 @@ def test_tuesday() -> None:
 
 
 def test_today_request_without_stub() -> None:
-    request = get_from_sample('sample2.json')
+    request = get_from_sample('requests/schedule/today_room.json')
     response = main.handler(request, None)
 
     actual = get_response_text(response)
@@ -177,7 +177,7 @@ def test_fetcher_error() -> None:
             return_value=get_from_sample('uunit/group_schedule.json')
     ) as method:
         method.side_effect = uunit.FetcherException()
-        request = get_from_sample('sample2.json')
+        request = get_from_sample('requests/schedule/today_room.json')
         response = main.handler(request, None)
 
     actual = get_response_text(response)
@@ -185,13 +185,13 @@ def test_fetcher_error() -> None:
     assert actual == 'Произошла ошибка, попробуй еще раз!'
 
 
-def test_first_pair_date() -> None:
+def test_first_lesson_date() -> None:
     with patch.object(
             uunit.Fetcher,
             'get_group_schedule',
             return_value=get_from_sample('uunit/group_schedule.json')
     ):
-        request = get_from_sample('first_pair_date.json')
+        request = get_from_sample('requests/first_lesson/date.json')
         response = main.handler(request, None)
 
     actual = get_response_text(response)
@@ -200,13 +200,13 @@ def test_first_pair_date() -> None:
 
 
 @freeze_time("2024-02-19")
-def test_first_pair_in_saturday_free() -> None:
+def test_first_lesson_in_saturday_free() -> None:
     with patch.object(
             uunit.Fetcher,
             'get_group_schedule',
             return_value=get_from_sample('uunit/group_schedule.json')
     ):
-        request = get_from_sample('first_pair_in_saturday.json')
+        request = get_from_sample('requests/first_lesson/saturday.json')
         response = main.handler(request, None)
 
     actual = get_response_text(response)
@@ -215,13 +215,13 @@ def test_first_pair_in_saturday_free() -> None:
 
 
 @freeze_time("2024-02-16")
-def test_first_pair_in_saturday_tomorrow() -> None:
+def test_first_lesson_in_saturday_tomorrow() -> None:
     with patch.object(
             uunit.Fetcher,
             'get_group_schedule',
             return_value=get_from_sample('uunit/group_schedule.json')
     ):
-        request = get_from_sample('first_pair_in_saturday.json')
+        request = get_from_sample('requests/first_lesson/saturday.json')
         response = main.handler(request, None)
 
     actual = get_response_text(response)
@@ -230,13 +230,13 @@ def test_first_pair_in_saturday_tomorrow() -> None:
 
 
 @freeze_time("2024-02-12")
-def test_first_pair_in_saturday() -> None:
+def test_first_lesson_in_saturday() -> None:
     with patch.object(
             uunit.Fetcher,
             'get_group_schedule',
             return_value=get_from_sample('uunit/group_schedule.json')
     ):
-        request = get_from_sample('first_pair_in_saturday.json')
+        request = get_from_sample('requests/first_lesson/saturday.json')
         response = main.handler(request, None)
 
     actual = get_response_text(response)
@@ -245,13 +245,13 @@ def test_first_pair_in_saturday() -> None:
 
 
 @freeze_time("2024-02-13")
-def test_first_pair_tomorrow() -> None:
+def test_first_lesson_tomorrow() -> None:
     with patch.object(
             uunit.Fetcher,
             'get_group_schedule',
             return_value=get_from_sample('uunit/group_schedule.json')
     ):
-        request = get_from_sample('first_pair_tomorrow.json')
+        request = get_from_sample('requests/first_lesson/tomorrow.json')
         response = main.handler(request, None)
 
     actual = get_response_text(response)
@@ -260,13 +260,13 @@ def test_first_pair_tomorrow() -> None:
 
 
 @freeze_time("2024-02-13")
-def test_first_pair_today() -> None:
+def test_first_lesson_today() -> None:
     with patch.object(
             uunit.Fetcher,
             'get_group_schedule',
             return_value=get_from_sample('uunit/group_schedule.json')
     ):
-        request = get_from_sample('first_pair_today.json')
+        request = get_from_sample('requests/first_lesson/today.json')
         response = main.handler(request, None)
 
     actual = get_response_text(response)
@@ -275,13 +275,13 @@ def test_first_pair_today() -> None:
 
 
 @freeze_time("2024-02-13")
-def test_first_pair_no_timeslot() -> None:
+def test_first_lesson_no_timeslot() -> None:
     with patch.object(
             uunit.Fetcher,
             'get_group_schedule',
             return_value=get_from_sample('uunit/group_schedule.json')
     ):
-        request = get_from_sample('first_pair_no_timeslot.json')
+        request = get_from_sample('requests/first_lesson/without_timeslot.json')
         response = main.handler(request, None)
 
     actual = get_response_text(response)

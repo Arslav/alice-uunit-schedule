@@ -6,7 +6,7 @@ from intents import *
 class Application:
     _intents: dict = {
         'schedule': ScheduleIntent.__name__,
-        'first_pair': FirstPairIntent.__name__,
+        'first_lesson': FirstLessonIntent.__name__,
     }
 
     _helloMessage = 'Привет! Давай я посмотрю расписание УУНИТа для тебя? Задай свой вопрос'

@@ -10,7 +10,7 @@
     }
   },
   "session": {
-    "message_id": 9,
+    "message_id": 4,
     "session_id": "757b887a-e904-4551-9ed6-d722531a9f2a",
     "skill_id": "60bce778-1df3-432f-bfd2-3553bd8b77bd",
     "user": {
@@ -23,18 +23,41 @@
     "user_id": "AB1D6D46FBAC8CF0299968D429396175DBA8511C3AAA05D033EE55D4D91318CE"
   },
   "request": {
-    "command": "когда на пары",
-    "original_utterance": "Когда на пары",
+    "command": "во сколько завтра в универ",
+    "original_utterance": "Во сколько завтра в универ",
     "nlu": {
       "tokens": [
-        "когда",
-        "на",
-        "пары"
+        "во",
+        "сколько",
+        "завтра",
+        "в",
+        "универ"
       ],
-      "entities": [],
+      "entities": [
+        {
+          "type": "YANDEX.DATETIME",
+          "tokens": {
+            "start": 2,
+            "end": 3
+          },
+          "value": {
+            "day": 1,
+            "day_is_relative": true
+          }
+        }
+      ],
       "intents": {
-        "first_pair": {
-          "slots": {}
+        "first_lesson": {
+          "slots": {
+            "time": {
+              "type": "TimeEntity",
+              "tokens": {
+                "start": 2,
+                "end": 3
+              },
+              "value": "date"
+            }
+          }
         }
       }
     },

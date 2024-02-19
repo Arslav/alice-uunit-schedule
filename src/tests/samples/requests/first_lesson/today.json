@@ -10,8 +10,8 @@
     }
   },
   "session": {
-    "message_id": 1,
-    "session_id": "04888725-5590-4c3f-875b-9c6c1b0c3b63",
+    "message_id": 7,
+    "session_id": "757b887a-e904-4551-9ed6-d722531a9f2a",
     "skill_id": "60bce778-1df3-432f-bfd2-3553bd8b77bd",
     "user": {
       "user_id": "5BC26158DCAA0C8E9C42325F9654AF8C6CBC9640B7031272969407EBCA70BADC"
@@ -23,37 +23,39 @@
     "user_id": "AB1D6D46FBAC8CF0299968D429396175DBA8511C3AAA05D033EE55D4D91318CE"
   },
   "request": {
-    "command": "во сколько 1 пара в субботу",
-    "original_utterance": "Во сколько первая пара в субботу",
+    "command": "во сколько сегодня в универ",
+    "original_utterance": "Во сколько сегодня в универ",
     "nlu": {
       "tokens": [
         "во",
         "сколько",
-        "1",
-        "пара",
+        "сегодня",
         "в",
-        "субботу"
+        "универ"
       ],
       "entities": [
         {
-          "type": "YANDEX.NUMBER",
+          "type": "YANDEX.DATETIME",
           "tokens": {
             "start": 2,
             "end": 3
           },
-          "value": 1
+          "value": {
+            "day": 0,
+            "day_is_relative": true
+          }
         }
       ],
       "intents": {
-        "first_pair": {
+        "first_lesson": {
           "slots": {
             "time": {
               "type": "TimeEntity",
               "tokens": {
-                "start": 5,
-                "end": 6
+                "start": 2,
+                "end": 3
               },
-              "value": "saturday"
+              "value": "date"
             }
           }
         }

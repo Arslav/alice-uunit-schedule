@@ -67,7 +67,7 @@ class DefaultRender(RenderInterface):
         return f'{pronouncing.pair_number(item.number)} - {item.type} - "{item.title}"'
 
 
-class ByClassRender(DefaultRender):
+class ByRoomRender(DefaultRender):
     def _format(self, item: Pair) -> str:
         return f'{pronouncing.pair_number(item.number)} - "{item.room}"'
 
@@ -126,5 +126,5 @@ class FirstPairRender(RenderInterface):
         return self._default[2]
 
 
-def factory_by_is_class(is_class: bool) -> RenderInterface:
-    return DefaultRender() if not is_class else ByClassRender()
+def factory_by_is_room(is_by_room: bool) -> RenderInterface:
+    return DefaultRender() if not is_by_room else ByRoomRender()
