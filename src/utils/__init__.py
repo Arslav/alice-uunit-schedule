@@ -1,4 +1,4 @@
-from datetime import datetime
+from datetime import datetime, timedelta
 
 
 class DateTime(datetime):
@@ -11,4 +11,6 @@ class DateTime(datetime):
 
     def is_tomorrow(self) -> bool:
         now = datetime.now()
-        return self.date() == now.replace(day=now.day + 1).date()
+        tomorrow = now + timedelta(1)
+
+        return self.date() == tomorrow.date()
